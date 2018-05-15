@@ -10,7 +10,322 @@
     <link href='css/railscasts.css' rel='stylesheet' />
   </head>
   <body>
-    <!--START--><div id='app'></div><!--STOP-->
+    <!--START--><div id='app'><div class="container unlimiter" data-reactroot="" data-reactid="1" data-react-checksum="-1895090060"><div class="fixed-top fixed-right space-left16" data-reactid="2"><div class="fill-light col6 pin-right" data-reactid="3"></div></div><div class="space-top5 scroll-styled overflow-auto pad1 width16 sidebar fixed-left fill-dark dark" data-reactid="4"><div class="pad0x small" data-reactid="5"><div class="small pad0x quiet space-top1" data-reactid="6">Introduction</div><a href="#api-docs" class="line-height15 pad0x pad00y quiet block " data-reactid="7">API Doc&#x27;s</a><div class="small pad0x quiet space-top1" data-reactid="8">Example</div><a href="#simplyx" class="line-height15 pad0x pad00y quiet block " data-reactid="9">SimplyX</a></div></div><div class="space-left16" data-reactid="10"><div class="" data-reactid="11"><div class="clearfix" data-reactid="12"><div data-title="API Doc&#x27;s" class="keyline-top section contain clearfix " data-reactid="13"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="14"><h2 id="api-docs">API Doc's</h2>
+<p>Welcome to the SimpyX API documentation, its based off prior work such as SimplyEmail &#x26; SimplyDomain. The SimplyX stack is built purely for speed and ability to deliver accurate email, domain and related info. Please understand SimplyX is in BETA.</p>
+</div></div><div data-title="SimplyX" class="keyline-top section contain clearfix " data-reactid="15"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="16"><h2 id="simplyx">SimplyX</h2>
+<p>This is our high-quality API. You can use this API to request
+domain and email data. to signup go-to <a href="https://simplyx.io/login">https://simplyx.io/login</a></p>
+</div></div><div data-title="API Codes &amp; Errors" class="keyline-top section contain clearfix " data-reactid="17"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="18"><h3 id="api-codes--errors">API Codes &#x26; Errors</h3>
+<p>In many cases the API follows the HTTP status code IETF standards close as possible with the RFC. In some cases where the request was valid but no response custom REST codes are used.</p>
+<p>All successful (200 OK) Reponse objects with <strong>NO</strong> error will use the following:</p>
+<p>All successful (200 OK)  Reponse objects <strong>WITH</strong> errors will use the following:</p>
+<p>All failed (4xx) Reponse objects with errors will use the following:</p>
+<p>2xx Success</p>
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>The request has succeeded. The information returned with the response is dependent on the method used in the request.</td>
+</tr>
+<tr>
+<td>201</td>
+<td>The request has been fulfilled and resulted in a new resource being created.</td>
+</tr>
+</tbody>
+</table>
+<p>4xx Client Error </p>
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>The request requires user authentication. The response MUST include a Authenticate header field with proper JWT.</td>
+</tr>
+</tbody>
+</table>
+</div><div class="space-bottom4 col6 pad2 prose clip fill-light space-top5" data-reactid="19"><h4 id="successful-request">Successful request</h4>
+<pre class='hljs'>{
+    "error": false,
+    "response_data": {
+        .....
+    } 
+}</pre>
+<h4 id="successful-request-with-errors">Successful request With Errors</h4>
+<pre class='hljs'>{
+    <span class="hljs-attr">"error"</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Custom Error Message Here"</span>
+}</pre>
+<h4 id="malformed-request">Malformed request</h4>
+<pre class='hljs'>{
+    <span class="hljs-attr">"error"</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Custom Error Message Here"</span>
+}</pre>
+</div></div><div data-title="Login Authentication" class="keyline-top section contain clearfix " data-reactid="20"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="21"><h3 id="login-authentication">Login Authentication</h3>
+<p>Login to obtain JWT (JSON Web Token) for proper authentication headers.</p>
+<p><strong>ALL</strong> requests require the following JSON properties:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>email</code></td>
+<td>(required) the user email used to sign up for API</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>(required) the password used to auth email</td>
+</tr>
+</tbody>
+</table>
+</div><div class="space-bottom4 col6 pad2 prose clip fill-light space-top5" data-reactid="22"><div class='endpoint dark fill-dark round '>
+      <div class='round-left pad0y pad1x fill-lighten0 code small endpoint-method'>GET</div>
+      <div class='pad0 code small endpoint-url'>/v1/login</div>
+    </div>
+<h4 id="example-request">Example request</h4>
+<pre class='hljs'>$ curl -X GET -H <span class="hljs-string">"Content-Type: application/json"</span> -d \ 
+    <span class="hljs-string">'{"email": "example.email@gmail.com", "password": "password"}'</span> \
+    https://simplyx.io/v1/login</pre>
+<h4 id="example-response">Example response</h4>
+<pre class='hljs'>{
+    <span class="hljs-attr">"email"</span>: <span class="hljs-string">"example.example@gmail.com"</span>,
+    <span class="hljs-attr">"token"</span>: <span class="hljs-string">"eyJ0eX.....luDg"</span>
+}</pre>
+</div></div><div data-title="Register User" class="keyline-top section contain clearfix " data-reactid="23"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="24"><h3 id="register-user">Register User</h3>
+<p>Register new user using a timed activation code. This API route emails users email a JWT (JSON Web Token) with 5 day expiration date.  </p>
+<p><strong>ALL</strong> emails can only be registred once.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>full_name</code></td>
+<td>(required) the user email used to sign up for API</td>
+</tr>
+<tr>
+<td><code>email_address</code></td>
+<td>(required) user email used as login / username</td>
+</tr>
+<tr>
+<td><code>phone_number</code></td>
+<td>(required) for future two factor auth</td>
+</tr>
+<tr>
+<td><code>job_type</code></td>
+<td>(required) type of job user / roll</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>(required) the password used to auth email</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Job Types</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IT</code></td>
+</tr>
+<tr>
+<td><code>DevOps</code></td>
+</tr>
+<tr>
+<td><code>Cyber_Security</code></td>
+</tr>
+<tr>
+<td><code>Sales</code></td>
+</tr>
+<tr>
+<td><code>Other</code></td>
+</tr>
+</tbody>
+</table>
+</div><div class="space-bottom4 col6 pad2 prose clip fill-light space-top5" data-reactid="25"><div class='endpoint dark fill-dark round '>
+      <div class='round-left pad0y pad1x fill-lighten0 code small endpoint-method'>POST</div>
+      <div class='pad0 code small endpoint-url'>/v1/register</div>
+    </div>
+<h4 id="example-request-1">Example request</h4>
+<pre class='hljs'>$ curl -X POST -H <span class="hljs-string">"Content-Type: application/json"</span> -d \ 
+    <span class="hljs-string">'{"email": "example.example@gmail.com", "password": "password"}'</span> \
+    https://simplyx.io/v1/register</pre>
+<h4 id="example-response-1">Example response</h4>
+<pre class='hljs'>{
+    <span class="hljs-attr">"email"</span>: <span class="hljs-string">"example.example@gmail.com"</span>,
+}</pre>
+</div></div><div data-title="Activate User" class="keyline-top section contain clearfix " data-reactid="26"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="27"><h3 id="activate-user">Activate User</h3>
+<p>Register new user using a timed activation code. This API route takes emails users JWT (JSON Web Token) obtained via SMTP.</p>
+<p><strong>ALL</strong> emails can only be registred once, but you can activate a user multiple times by calling '<a href="https://simplyx.io/v1/register">https://simplyx.io/v1/register</a>'</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>activation_code</code></td>
+<td>(required) the user activation JWT</td>
+</tr>
+</tbody>
+</table>
+</div><div class="space-bottom4 col6 pad2 prose clip fill-light space-top5" data-reactid="28"><div class='endpoint dark fill-dark round '>
+      <div class='round-left pad0y pad1x fill-lighten0 code small endpoint-method'>GET</div>
+      <div class='pad0 code small endpoint-url'>/v1/activation</div>
+    </div>
+<h4 id="example-request-2">Example request</h4>
+<pre class='hljs'>$ curl -X GET -H <span class="hljs-string">"Content-Type: application/json"</span> \
+    -d <span class="hljs-string">'{"activation_code": "..._XDJ3Qb66qpBmopIUGUMs0mjnSWOri555TzyOwviY1s"}'</span> \ 
+    https://simplyx.io/v1/activate</pre>
+<h4 id="example-response-2">Example response</h4>
+<pre class='hljs'>{
+    <span class="hljs-attr">"email"</span>: <span class="hljs-string">"example.example@gmail.com"</span>,
+}</pre>
+</div></div><div data-title="Query Domain" class="keyline-top section contain clearfix " data-reactid="29"><div class="space-bottom8 col6 pad2x prose clip" data-reactid="30"><h3 id="query-domain">Query Domain</h3>
+<p>Query for Domain via a known domain. This API returns entire data set in BETA, it will allow future calls to reduce load.</p>
+<p><strong><em>ALL</em></strong> request <strong><em>MUST</em></strong> contain 'Authorization: Bearer' JWT token to reach end-point.</p>
+<table>
+<thead>
+<tr>
+<th>Header Name</th>
+<th>Header Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Authorization:</code></td>
+<td><code>Bearer SDcsd..sSD</code></td>
+<td>(required) the user activation JWT</td>
+</tr>
+</tbody>
+</table>
+<p>Opt settings to configure return data:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+<th>Default</th>
+<th>Valid Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skip</code></td>
+<td>(opt) to configure how many records to skip from original start limit ex ( limit: 100: skip: 500 = Email records 500-600)</td>
+<td>0</td>
+<td>Unlimited</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td>(opt) to configure the ammount of records returned in one query</td>
+<td>5</td>
+<td>1-100</td>
+</tr>
+</tbody>
+</table>
+</div><div class="space-bottom4 col6 pad2 prose clip fill-light space-top5" data-reactid="31"><div class='endpoint dark fill-dark round '>
+      <div class='round-left pad0y pad1x fill-lighten0 code small endpoint-method'>GET</div>
+      <div class='pad0 code small endpoint-url'>/v1/domain</div>
+    </div>
+<h4 id="example-request-3">Example request</h4>
+<pre class='hljs'>$ curl -X GET -H <span class="hljs-string">"Authorization: Bearer XDJ3Qb....66qpBmo"</span> \
+    -H <span class="hljs-string">"Content-Type: application/json"</span> -d <span class="hljs-string">'{"domain": "domain.com"}'</span> \
+    https://simplyx.io/v1/domain</pre>
+<h4 id="example-response-3">Example response</h4>
+<pre class='hljs'>{
+    <span class="hljs-attr">"domain"</span>: <span class="hljs-string">"slack.com"</span>,
+    <span class="hljs-attr">"active"</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">"last_update"</span>: <span class="hljs-number">1525850454.678481</span>,
+    <span class="hljs-attr">"email_pattern"</span>: <span class="hljs-string">""</span>,
+    <span class="hljs-attr">"email_count"</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">"emails"</span>: [
+        {
+            <span class="hljs-attr">"email_address"</span>: <span class="hljs-string">"feedback@slack.com"</span>,
+            <span class="hljs-attr">"first_name"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-attr">"last_name"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-attr">"name_generated_email"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"verified"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"giberish"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"first_seen"</span>: <span class="hljs-number">1525850454.688317</span>,
+            <span class="hljs-attr">"last_seen"</span>: <span class="hljs-number">1525850454.68832</span>,
+            <span class="hljs-attr">"sources"</span>: [
+                <span class="hljs-string">"https://slack.com/brand-guidelines"</span>
+            ]
+        },
+        .......
+        {
+            <span class="hljs-attr">"email_address"</span>: <span class="hljs-string">"legal@slack.com"</span>,
+            <span class="hljs-attr">"first_name"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-attr">"last_name"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-attr">"name_generated_email"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"verified"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"giberish"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"first_seen"</span>: <span class="hljs-number">1525850454.695294</span>,
+            <span class="hljs-attr">"last_seen"</span>: <span class="hljs-number">1525850454.695297</span>,
+            <span class="hljs-attr">"sources"</span>: [
+                <span class="hljs-string">"https://slack.com/terms"</span>
+            ]
+        }
+    ],
+    <span class="hljs-attr">"subdomains"</span>: [],
+    <span class="hljs-attr">"webmail"</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-attr">"mx_record"</span>: {
+        <span class="hljs-attr">"Status"</span>: <span class="hljs-number">0</span>,
+        <span class="hljs-attr">"TC"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">"RD"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"RA"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"AD"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">"CD"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">"Question"</span>: [
+            {
+                <span class="hljs-attr">"name"</span>: <span class="hljs-string">"slack.com."</span>,
+                <span class="hljs-attr">"type"</span>: <span class="hljs-number">255</span>
+            }
+        ],
+        <span class="hljs-attr">"Answer"</span>: [
+            {
+                <span class="hljs-attr">"name"</span>: <span class="hljs-string">"slack.com."</span>,
+                <span class="hljs-attr">"type"</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-attr">"TTL"</span>: <span class="hljs-number">59</span>,
+                <span class="hljs-attr">"data"</span>: <span class="hljs-string">"13.32.184.100"</span>
+            },
+            ...........
+        ],
+        <span class="hljs-attr">"Comment"</span>: <span class="hljs-string">"Response from 205.251.197.213."</span>
+    },
+    <span class="hljs-attr">"allows_verify"</span>: <span class="hljs-literal">false</span>
+}</pre>
+</div></div></div></div></div><div class="fixed-top space-left16" data-reactid="32"><div class="events fill-light bottom-shadow pad1 col6 pin-topright  " data-reactid="33"><div class="space-right1 small quiet inline" data-reactid="34">Show examples in:</div><div class="rounded-toggle inline short" data-reactid="35"><a class="strong active" data-reactid="36">cURL</a><a class="strong " data-reactid="37">cli</a><a class="strong " data-reactid="38">Python</a><a class="strong " data-reactid="39">JS</a><a class="strong " data-reactid="40">Java</a><a class="strong " data-reactid="41">ObjC</a><a class="strong " data-reactid="42">Swift</a></div><div class="fr pad0" data-reactid="43"><a title="Display as 1 column" style="cursor:pointer;" class="icon quiet caret-left pad0 fill-darken0 round" data-reactid="44"></a></div></div></div><div class="fill-dark dark bottom-shadow fixed-top pad0 width16" data-reactid="45"><a href="/" class="active space-top1 space-left1 pin-topleft icon round dark pad0 fill-red" data-reactid="46"></a><div class="strong small pad0
+          
+          space-left4 line-height15" data-reactid="47">SimplyX API Documentation</div></div></div></div><!--STOP-->
     <script src='bundle.js'></script>
   </body>
 </html>

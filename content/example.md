@@ -1,431 +1,262 @@
-## Wobble
+## SimplyX
 
-This is our high-quality wobbles API. You can use this API to request
-and remove different wobbles at a low wibble price.
+This is our high-quality API. You can use this API to request
+domain and email data. to signup go-to https://simplyx.io/login
 
-### List wobbles
+### API Codes & Errors
 
-Lists all wobbles for a particular account.
+In many cases the API follows the HTTP status code IETF standards close as possible with the RFC. In some cases where the request was valid but no response custom REST codes are used.
 
-```endpoint
-GET /wobbles/v1/{username} wobbles:read
-```
-
-#### Example request
-
-```curl
-$ curl https://wobble.biz/wobbles/v1/{username}
-```
-
-```bash
-$ wbl wobbles list
-```
-
-```javascript
-client.listWobbles(function(err, wobbles) {
-  console.log(wobbles);
-});
-```
-
-```python
-wobbles.list()
-```
-
-#### Example response
-
-```json
-[
-  {
-    "owner": "{username}",
-    "id": "{wobble_id}",
-    "created": "{timestamp}",
-    "modified": "{timestamp}"
-  },
-  {
-    "owner": "{username}",
-    "id": "{wobble_id}",
-    "created": "{timestamp}",
-    "modified": "{timestamp}"
-  }
-]
-```
-
-### Create wobble
-
-Creates a new, empty wobble.
-
-```endpoint
-POST /wobbles/v1/{username}
-```
-
-#### Example request
-
-```curl
-curl -X POST https://wobble.biz/wobbles/v1/{username}
-```
-
-```bash
-$ wbl wobbles create
-```
-
-```javascript
-client.createWobble({
-  name: 'example',
-  description: 'An example wobble'
-}, function(err, wobble) {
-  console.log(wobble);
-});
-```
-
-```python
-response = wobbles.create(
-  name='example', description='An example wobble')
-```
-
-#### Example request body
-
+All successful (200 OK) Reponse objects with **NO** error will use the following:
+#### Successful request
 ```json
 {
-  "name": "foo",
-  "description": "bar"
+    "error": false,
+    "response_data": {
+        .....
+    } 
 }
 ```
+
+All successful (200 OK)  Reponse objects **WITH** errors will use the following:
+#### Successful request With Errors
+```json
+{
+    "error": true,
+    "status": "Custom Error Message Here"
+}
+```
+
+All failed (4xx) Reponse objects with errors will use the following:
+#### Malformed request
+```json
+{
+    "error": false,
+    "message": "Custom Error Message Here"
+}
+```
+
+2xx Success
+
+HTTP Code | Description 
+---|---
+200 | The request has succeeded. The information returned with the response is dependent on the method used in the request.
+201 | The request has been fulfilled and resulted in a new resource being created.
+
+4xx Client Error 
+
+HTTP Code | Description 
+---|---
+400 | The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+401 | The request requires user authentication. The response MUST include a Authenticate header field with proper JWT.
+
+
+### Login Authentication 
+
+Login to obtain JWT (JSON Web Token) for proper authentication headers.
+
+**ALL** requests require the following JSON properties:
 
 Property | Description
 ---|---
-`name` | (optional) the name of the wobble
-`description` | (optional) a description of the wobble
-
-#### Example response
-
-```json
-{
-  "owner": "{username}",
-  "id": "{wobble_id}",
-  "name": null,
-  "description": null,
-  "created": "{timestamp}",
-  "modified": "{timestamp}"
-}
-```
-
-### Retrieve a wobble
-
-Returns a single wobble.
+`email` | (required) the user email used to sign up for API
+`password` | (required) the password used to auth email
 
 ```endpoint
-GET /wobbles/v1/{username}/{wobble_id}
+GET /v1/login wobbles:read
 ```
-
-Retrieve information about an existing wobble.
 
 #### Example request
 
 ```curl
-curl https://wobble.biz/wobbles/v1/{username}/{wobble_id}
-```
-
-```bash
-$ wbl wobble read-wobble wobble-id
-```
-
-```python
-attrs = wobbles.read_wobble(wobble_id).json()
-```
-
-```javascript
-client.readWobble('wobble-id',
-  function(err, wobble) {
-    console.log(wobble);
-  });
+$ curl -X GET -H "Content-Type: application/json" -d \ 
+    '{"email": "example.email@gmail.com", "password": "password"}' \
+    https://simplyx.io/v1/login
 ```
 
 #### Example response
 
 ```json
 {
-  "owner": "{username}",
-  "id": "{wobble_id}",
-  "created": "{timestamp}",
-  "modified": "{timestamp}"
+    "email": "example.example@gmail.com",
+    "token": "eyJ0eX.....luDg"
 }
 ```
 
-### Update a wobble
+### Register User 
 
-Updates the properties of a particular wobble.
+Register new user using a timed activation code. This API route emails users email a JWT (JSON Web Token) with 5 day expiration date.  
 
-```endpoint
-PATCH /wobbles/v1/{username}/{wobble_id}
-```
-
-#### Example request
-
-```curl
-curl --request PATCH https://wobble.biz/wobbles/v1/{username}/{wobble_id} \
-  -d @data.json
-```
-
-```python
-resp = wobbles.update_wobble(
-  wobble_id,
-  name='updated example',
-  description='An updated example wobble'
-  ).json()
-```
-
-```bash
-$ wbl wobble update-wobble wobble-id
-```
-
-```javascript
-var options = { name: 'foo' };
-client.updateWobble('wobble-id', options, function(err, wobble) {
-  console.log(wobble);
-});
-```
-
-#### Example request body
-
-```json
-{
-  "name": "foo",
-  "description": "bar"
-}
-```
+**ALL** emails can only be registred once.
 
 Property | Description
 ---|---
-`name` | (optional) the name of the wobble
-`description` | (optional) a description of the wobble
+`full_name` | (required) the user email used to sign up for API
+`email_address` | (required) user email used as login / username
+`phone_number` | (required) for future two factor auth
+`job_type` | (required) type of job user / roll
+`password` | (required) the password used to auth email
+
+Job Types |
+---|
+`IT` | 
+`DevOps` | 
+`Cyber_Security` | 
+`Sales` | 
+`Other` | 
+
+```endpoint
+POST /v1/register
+```
+
+#### Example request
+
+```curl
+$ curl -X POST -H "Content-Type: application/json" -d \ 
+    '{"email": "example.example@gmail.com", "password": "password"}' \
+    https://simplyx.io/v1/register
+```
 
 #### Example response
 
 ```json
 {
-  "owner": "{username}",
-  "id": "{wobble_id}",
-  "name": "foo",
-  "description": "bar",
-  "created": "{timestamp}",
-  "modified": "{timestamp}"
+    "email": "example.example@gmail.com",
 }
 ```
 
-### Delete a wobble
+### Activate User 
 
-Deletes a wobble, including all wibbles it contains.
+Register new user using a timed activation code. This API route takes emails users JWT (JSON Web Token) obtained via SMTP.
+
+**ALL** emails can only be registred once, but you can activate a user multiple times by calling 'https://simplyx.io/v1/register'
+
+Property | Description
+---|---
+`activation_code` | (required) the user activation JWT 
+
+
 
 ```endpoint
-DELETE /wobbles/v1/{username}/{wobble_id}
+GET /v1/activation
 ```
 
 #### Example request
 
 ```curl
-curl -X DELETE https://wobble.biz/wobbles/v1/{username}/{wobble_id}
-```
-
-```bash
-$ wbl wobble delete-wobble wobble-id
-```
-
-```python
-resp = wobbles.delete_wobble(wobble_id)
-```
-
-```javascript
-client.deleteWobble('wobble-id', function(err) {
-  if (!err) console.log('deleted!');
-});
-```
-
-#### Example response
-
-> HTTP 204
-
-### List wibbles
-
-List all the wibbles in a wobble. The response body will be a
-WobbleCollection.
-
-```endpoint
-GET /wobbles/v1/{username}/{wobble_id}/wibbles
-```
-
-#### Example request
-
-```curl
-curl https://wobble.biz/wobbles/v1/{username}/{wobble_id}/wibbles
-```
-
-```bash
-$ wbl wobble list-wibbles wobble-id
-```
-
-```python
-collection = wobbles.list_wibbles(wobble_id).json()
-```
-
-```javascript
-client.listWobbles('wobble-id', {}, function(err, collection) {
-  console.log(collection);
-});
+$ curl -X GET -H "Content-Type: application/json" \
+    -d '{"activation_code": "..._XDJ3Qb66qpBmopIUGUMs0mjnSWOri555TzyOwviY1s"}' \ 
+    https://simplyx.io/v1/activate
 ```
 
 #### Example response
 
 ```json
 {
-  "type": "Wobble",
-  "wibbles": [
-    {
-      "id": "{wibble_id}",
-      "type": "Wobble",
-      "properties": {
-        "prop0": "value0"
-      }
+    "email": "example.example@gmail.com",
+}
+```
+
+### Query Domain 
+
+Query for Domain via a known domain. This API returns entire data set in BETA, it will allow future calls to reduce load.
+
+***ALL*** request ***MUST*** contain 'Authorization: Bearer' JWT token to reach end-point.
+
+Header Name | Header Value | Description
+---|---|---
+`Authorization:` | `Bearer SDcsd..sSD` |(required) the user activation JWT 
+
+Opt settings to configure return data:
+
+Property | Description | Default | Valid Value 
+---|---|---|---|
+`skip` | (opt) to configure how many records to skip from original start limit ex ( limit: 100: skip: 500 = Email records 500-600) | 0 | Unlimited
+`limit` | (opt) to configure the ammount of records returned in one query | 5 | 1-100
+
+
+
+```endpoint
+GET /v1/domain
+```
+
+#### Example request
+
+```curl
+$ curl -X GET -H "Authorization: Bearer XDJ3Qb....66qpBmo" \
+    -H "Content-Type: application/json" -d '{"domain": "domain.com"}' \
+    https://simplyx.io/v1/domain
+```
+
+#### Example response
+
+```json
+{
+    "domain": "slack.com",
+    "active": true,
+    "last_update": 1525850454.678481,
+    "email_pattern": "",
+    "email_count": 3,
+    "emails": [
+        {
+            "email_address": "feedback@slack.com",
+            "first_name": "",
+            "last_name": "",
+            "name_generated_email": false,
+            "verified": false,
+            "giberish": false,
+            "first_seen": 1525850454.688317,
+            "last_seen": 1525850454.68832,
+            "sources": [
+                "https://slack.com/brand-guidelines"
+            ]
+        },
+        .......
+        {
+            "email_address": "legal@slack.com",
+            "first_name": "",
+            "last_name": "",
+            "name_generated_email": false,
+            "verified": false,
+            "giberish": false,
+            "first_seen": 1525850454.695294,
+            "last_seen": 1525850454.695297,
+            "sources": [
+                "https://slack.com/terms"
+            ]
+        }
+    ],
+    "subdomains": [],
+    "webmail": false,
+    "mx_record": {
+        "Status": 0,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": false,
+        "CD": false,
+        "Question": [
+            {
+                "name": "slack.com.",
+                "type": 255
+            }
+        ],
+        "Answer": [
+            {
+                "name": "slack.com.",
+                "type": 1,
+                "TTL": 59,
+                "data": "13.32.184.100"
+            },
+            ...........
+        ],
+        "Comment": "Response from 205.251.197.213."
     },
-    {
-      "id": "{wibble_id}",
-      "type": "Wobble",
-      "properties": {
-        "prop0": "value0"
-      }
-    }
-  ]
+    "allows_verify": false
 }
 ```
 
-### Insert or update a wibble
 
-Inserts or updates a wibble in a wobble. If there's already a wibble
-with the given ID in the wobble, it will be replaced. If there isn't
-a wibble with that ID, a new wibble is created.
 
-```endpoint
-PUT /wobbles/v1/{username}/{wobble_id}/wibbles/{wibble_id}
-```
 
-#### Example request
 
-```curl
-curl https://wobble.biz/wobbles/v1/{username}/{wobble_id}/wibbles/{wibble_id} \
-  -X PUT \
-  -d @file.geojson
-```
-
-```bash
-$ wbl wobble put-wibble wobble-id wibble-id 'geojson-wibble'
-```
-
-```javascript
-var wibble = {
-  "type": "Wobble",
-  "properties": { "name": "Null Island" }
-};
-client.insertWobble(wibble, 'wobble-id', function(err, wibble) {
-  console.log(wibble);
-});
-```
-
-#### Example request body
-
-```json
-{
-  "id": "{wibble_id}",
-  "type": "Wobble",
-  "properties": {
-    "prop0": "value0"
-  }
-}
-```
-
-Property | Description
---- | ---
-`id` | the id of an existing wibble in the wobble
-
-#### Example response
-
-```json
-{
-  "id": "{wibble_id}",
-  "type": "Wobble",
-  "properties": {
-    "prop0": "value0"
-  }
-}
-```
-
-### Retrieve a wibble
-
-Retrieves a wibble in a wobble.
-
-```endpoint
-GET /wobbles/v1/{username}/{wobble_id}/wibbles/{wibble_id}
-```
-
-#### Example request
-
-```curl
-curl https://wobble.biz/wobbles/v1/{username}/{wobble_id}/wibbles/{wibble_id}
-```
-
-```bash
-$ wbl wobble read-wibble wobble-id wibble-id
-```
-
-```javascript
-client.readWobble('wibble-id', 'wobble-id',
-  function(err, wibble) {
-    console.log(wibble);
-  });
-```
-
-```python
-wibble = wobbles.read_wibble(wobble_id, '2').json()
-```
-
-#### Example response
-
-```json
-{
-  "id": "{wibble_id}",
-  "type": "Wobble",
-  "properties": {
-    "prop0": "value0"
-  }
-}
-```
-
-### Delete a wibble
-
-Removes a wibble from a wobble.
-
-```endpoint
-DELETE /wobbles/v1/{username}/{wobble_id}/wibbles/{wibble_id}
-```
-
-#### Example request
-
-```javascript
-client.deleteWobble('wibble-id', 'wobble-id', function(err, wibble) {
-  if (!err) console.log('deleted!');
-});
-```
-
-```curl
-curl -X DELETE https://wobble.biz/wobbles/v1/{username}/{wobble_id}/wibbles/{wibble_id}
-```
-
-```python
-resp = wobbles.delete_wibble(wobble_id, wibble_id)
-```
-
-```bash
-$ wbl wobble delete-wibble wobble-id wibble-id
-```
-
-#### Example response
-
-> HTTP 204
